@@ -4,14 +4,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
-
-import tacos.Ingredient;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import tacos.Ingredient;
+
 @Repository
 public class JdbcIngredientRepository implements IngredientRepository {
+
     private JdbcTemplate jdbc;
 
     @Autowired
@@ -32,6 +32,14 @@ public class JdbcIngredientRepository implements IngredientRepository {
                 this::mapRowToIngredient, id);
     }
 
+    private Ingredient mapRowToIngredient(ResultSet rs, int rowNum)
+            throws SQLException {
+        return new Ingredient(
+                rs.getString("id"),
+                rs.getString("name"),
+                Ingredient.Type.valueOf(rs.getString("type")));
+    }
+
     @Override
     public Ingredient save(Ingredient ingredient) {
         jdbc.update(
@@ -40,13 +48,5 @@ public class JdbcIngredientRepository implements IngredientRepository {
                 ingredient.getName(),
                 ingredient.getType().toString());
         return ingredient;
-    }
-
-    private Ingredient mapRowToIngredient(ResultSet rs, int rowNum)
-      throws SQLException {
-        return new Ingredient(
-                rs.getString("id"),
-                rs.getString("name"),
-                Ingredient.Type.valueOf(rs.getString("type")));
     }
 }
