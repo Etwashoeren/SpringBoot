@@ -17,17 +17,15 @@ import java.util.Arrays;
 import java.util.Date;
 
 @Repository
-public class JdbcTacoRepository implements TacoRepository{
-
+public class JdbcTacoRepository implements TacoRepository {
     private JdbcTemplate jdbc;
-
     public JdbcTacoRepository(JdbcTemplate jdbc) {
         this.jdbc = jdbc;
     }
 
     @Override
     public Taco save(Taco taco) {
-        long tacoId =  saveTacoInfo(taco);
+        long tacoId = saveTacoInfo(taco);
         taco.setId(tacoId);
         for (Ingredient ingredient : taco.getIngredients()) {
             saveIngredientToTaco(ingredient, tacoId);
@@ -48,14 +46,14 @@ public class JdbcTacoRepository implements TacoRepository{
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbc.update(psc, keyHolder);
-
         return keyHolder.getKey().longValue();
     }
 
     private void saveIngredientToTaco(
             Ingredient ingredient, long tacoId) {
         jdbc.update(
-                "insert into Taco_Ingredients (taco, ingredient)" + "values (?, ?)",
+                "insert into Taco_Ingredients (taco, ingredient) " +
+                        "values (?, ?)",
                 tacoId, ingredient.getId());
     }
 }
